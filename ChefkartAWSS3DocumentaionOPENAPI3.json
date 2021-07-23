@@ -1,0 +1,525 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Chefkart AWS Storage Microservice",
+    "description": "This is Chefkart's AWS Storage Microservice for storing and retreiving documents and Images",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "https://petstore.swagger.io/"
+    },
+    {
+      "url": "http://petstore.swagger.io/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Storage",
+      "description": "Every Operation related to File storage in Bucket"
+    },
+    {
+      "name": "Bucket",
+      "description": "Every Operation related to managing Buckets in AWS S3 Storage"
+    }
+  ],
+  "paths": {
+    "/storage/upload": {
+      "post": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Upload a new file to AWS S3 Storage",
+        "operationId": "uploadFile",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "bucketName",
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "The file to Upload",
+                    "format": "binary"
+                  },
+                  "bucketName": {
+                    "type": "string",
+                    "description": "Name of Bucket in which file is to be uploaded"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Operation is successfull or not"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/storage/downloadFile": {
+      "get": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Download any file using File Name and Bucket Name",
+        "operationId": "downloadFile",
+        "parameters": [
+          {
+            "name": "fileName",
+            "in": "query",
+            "description": "Name of File To Download",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bucketName",
+            "in": "query",
+            "description": "Name of Bucket in which file is Located",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/storage/delete": {
+      "post": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Upload a new file to AWS S3 Storage",
+        "operationId": "deleteFile",
+        "requestBody": {
+          "description": "Object containing File Name and Bucket Name",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bucketName": {
+                    "type": "string",
+                    "description": "Bucket Name in which file is located"
+                  },
+                  "fileName": {
+                    "type": "string",
+                    "description": "File Name which is to be deleted"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Operation is successfull or not"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/storage/getAllFiles": {
+      "get": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Get List of All files in the Bucket",
+        "operationId": "getAllFiles",
+        "parameters": [
+          {
+            "name": "bucketName",
+            "in": "query",
+            "description": "Name of Bucket",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Operation is successfull or not"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "File Name"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bucket/create": {
+      "post": {
+        "tags": [
+          "Bucket"
+        ],
+        "summary": "Create a new AWS S3 Bucket",
+        "operationId": "createBucket",
+        "requestBody": {
+          "description": "Object containing Bucket Name",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bucketName": {
+                    "type": "string",
+                    "description": "Bucket Name in which file is located"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Operation is successfull or not"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {}
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/bucket/listAllBuckets": {
+      "get": {
+        "tags": [
+          "Bucket"
+        ],
+        "summary": "Get List of all Bucket in AWS S3 storage",
+        "operationId": "listAllBuckets",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BucketList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bucket/delete": {
+      "post": {
+        "tags": [
+          "Bucket"
+        ],
+        "summary": "Delete a Bucket from AWS S3 Storage",
+        "operationId": "deleteBucket",
+        "requestBody": {
+          "description": "Object containing Bucket Name",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bucketName": {
+                    "type": "string",
+                    "description": "Bucket Name in which file is located"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Operation is successfull or not"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorFormat"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BucketList": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "Buckets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "Name": {
+                      "type": "string"
+                    },
+                    "CreationDate": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "Owner": {
+                "type": "object",
+                "properties": {
+                  "DisplayName": {
+                    "type": "string"
+                  },
+                  "ID": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ErrorFormat": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
